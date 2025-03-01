@@ -34,13 +34,22 @@ class ProductListView(generics.ListAPIView):
     pagination_class = ProductPagination
 
 
-class CartView(generics.ListAPIView):
-    """Просмотр корзины пользователя"""
-    serializer_class = CartSerializer
+class CartView(APIView):
+    """Просмотр корзины пользователя с общей суммой и количеством товаров"""
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return Cart.objects.filter(user=self.request.user)
+    def get(self, request):
+        cart_items = Cart.objects.filter(user=request.user)
+        serialized_cart = CartSerializer(cart_items, many=True).data
+
+        total_quantity = sum(item["quantity"] for item in serialized_cart)
+        total_price = sum(item["total_price"] for item in serialized_cart)
+
+        return Response({
+            "items": serialized_cart,
+            "total_quantity": total_quantity,
+            "total_price": total_price
+        })
 
 
 class AddToCartView(APIView):
