@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
 
 class Category(models.Model):
@@ -61,3 +62,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Cart(models.Model):
+    """Модель корзины"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cart")
+    product = models.ForeignKey("shop.Product", on_delete=models.CASCADE, related_name="cart_items")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
+
+    class Meta:
+        unique_together = ("user", "product")  # Уникальность связки "пользователь + продукт"
+        verbose_name = "Корзина"
+        verbose_name_plural = "Корзина"
+
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name} ({self.quantity})"
