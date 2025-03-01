@@ -22,3 +22,5 @@
 Создание суперпользователя:
 python manage.py csu --email=admin@shop.com --password=supersecret
 (Если не передать аргументы, то создастся admin@example.com с паролем 0000).
+
+В проекте прикреплена Postman-коллекция.

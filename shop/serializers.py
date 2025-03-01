@@ -40,14 +40,12 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     """Сериализатор для корзины"""
     product = serializers.StringRelatedField()
-    product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), source="product", write_only=True
-    )
+    product_id = serializers.IntegerField(source="product.id", read_only=True)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Cart
-        fields = ("id", "product", "product_id", "quantity", "total_price")
+        fields = ("product_id", "product", "quantity", "total_price")
 
     def get_total_price(self, obj):
         return obj.product.price * obj.quantity

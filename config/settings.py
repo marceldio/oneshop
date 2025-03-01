@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -116,4 +117,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),  # Access-токен живёт 1 час
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh-токен живёт 7 дней
+    "ROTATE_REFRESH_TOKENS": True,  # Обновлять refresh-токен при каждом обновлении access
 }

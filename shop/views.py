@@ -59,8 +59,13 @@ class AddToCartView(APIView):
             return Response({"error": "Товар не найден"}, status=status.HTTP_404_NOT_FOUND)
 
         cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
         if not created:
-            cart_item.quantity += int(quantity)
+            cart_item.quantity = int(quantity)  # Просто обновляем количество
+
+            # cart_item.quantity += int(quantity) # Увеличиваем кол-во товара на указанное значение
+            # cart_item.quantity += 1  # Добавляем только 1 штуку при повторном запросе
+
             cart_item.save()
 
         return Response(CartSerializer(cart_item).data, status=status.HTTP_201_CREATED)
