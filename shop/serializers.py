@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from shop.models import Category, SubCategory, Product
-
+from shop.models import Category, SubCategory, Product, Cart
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
@@ -36,3 +35,19 @@ class ProductSerializer(serializers.ModelSerializer):
             "medium": obj.image_medium.url if obj.image_medium else None,
             "large": obj.image_large.url if obj.image_large else None,
         }
+
+
+class CartSerializer(serializers.ModelSerializer):
+    """Сериализатор для корзины"""
+    product = serializers.StringRelatedField()
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source="product", write_only=True
+    )
+    total_price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cart
+        fields = ("id", "product", "product_id", "quantity", "total_price")
+
+    def get_total_price(self, obj):
+        return obj.product.price * obj.quantity
