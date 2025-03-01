@@ -40,3 +40,24 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return f"{self.category.name} → {self.name}"
+
+
+class Product(models.Model):
+    """Модель продукта"""
+    name = models.CharField(max_length=255, verbose_name="Название")
+    slug = models.SlugField(max_length=255, unique=True, blank=True, verbose_name="Slug")
+    category = models.ForeignKey(
+        "shop.Category", on_delete=models.CASCADE, related_name="products", verbose_name="Категория")
+    subcategory = models.ForeignKey(
+        "shop.SubCategory", on_delete=models.CASCADE, related_name="products", verbose_name="Подкатегория")
+    image_small = models.ImageField(upload_to="products/small/", verbose_name="Изображение (маленькое)")
+    image_medium = models.ImageField(upload_to="products/medium/", verbose_name="Изображение (среднее)")
+    image_large = models.ImageField(upload_to="products/large/", verbose_name="Изображение (большое)")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+
+    class Meta:
+        verbose_name = "Продукт"
+        verbose_name_plural = "Продукты"
+
+    def __str__(self):
+        return self.name

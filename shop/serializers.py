@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from shop.models import Category, SubCategory
+from shop.models import Category, SubCategory, Product
+
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
@@ -17,3 +18,21 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ("id", "name", "slug", "image", "subcategories")
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    """Сериализатор для продуктов"""
+    category = serializers.StringRelatedField()
+    subcategory = serializers.StringRelatedField()
+    images = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ("id", "name", "slug", "category", "subcategory", "price", "images")
+
+    def get_images(self, obj):
+        return {
+            "small": obj.image_small.url if obj.image_small else None,
+            "medium": obj.image_medium.url if obj.image_medium else None,
+            "large": obj.image_large.url if obj.image_large else None,
+        }
